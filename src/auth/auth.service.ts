@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
 import { JwtService } from '@nestjs/jwt';
@@ -20,12 +20,12 @@ export class AuthService {
   ) {}
 
   login(loginDto: LoginDto): Promise<PfxHttpResponseDto> {
-    this.logger.log(`login: email=${loginDto.email}`);
+    this.logger.log(`login: username=${loginDto.username}`);
     
-    const { email, password } = loginDto;
+    const { username, password } = loginDto;
 
     // * create/update user
-    return this.adminUserService.findOneByEmail(email)
+    return this.adminUserService.findOneByEmail(username)
     .then( (response: PfxHttpResponseDto) => {
 
       // * generate response
@@ -36,19 +36,25 @@ export class AuthService {
 
         // * validate password
         if( !bcrypt.compareSync(password, userDto.password ) ) {
-          this.logger.warn(`login: wrong password, email=${email}`);
-          throw new BadRequestException('invalid credentianls');  
+          this.logger.warn(`login: wrong password, username=${username}`);
+          throw new UnauthorizedException('invalid credentianls');  
         }
         
         // * generate token
         const token = this.generateJwtToken(userDto);
 
-        const data = {token};
+        const data = {
+          user: {
+            name: userDto.name
+          },
+          token
+        }
+
         return new PfxHttpResponseDto(response.internalCode, response.message, 1, data);
       }
       
-      this.logger.warn(`login: user not found, response=${response.message}, email=${email}`);
-      throw new BadRequestException('invalid credentianls');  
+      this.logger.warn(`login: user not found, response=${response.message}, username=${username}`);
+      throw new UnauthorizedException('invalid credentianls');  
     })
 
   }
