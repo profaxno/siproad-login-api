@@ -1,6 +1,6 @@
 import { PfxHttpResponseDto } from 'profaxnojs/axios';
 
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Logger, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Logger, Post, UnauthorizedException } from '@nestjs/common';
 
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
@@ -16,7 +16,7 @@ export class AuthController {
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   login(@Body() loginDto: LoginDto): Promise<PfxHttpResponseDto> {
-    this.logger.log(`>>> login: email=${loginDto.email}`);
+    this.logger.log(`>>> login: username=${loginDto.username}`);
     const start = performance.now();
 
     return this.authService.login(loginDto)
@@ -26,8 +26,8 @@ export class AuthController {
       return response;
     })
     .catch((error) => {
-      if(error instanceof BadRequestException)
-        return new PfxHttpResponseDto(HttpStatus.BAD_REQUEST, error.message);
+      if(error instanceof UnauthorizedException)
+        return new PfxHttpResponseDto(HttpStatus.UNAUTHORIZED, error.message);
 
       this.logger.error(error.stack);
       return new PfxHttpResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, error.message);

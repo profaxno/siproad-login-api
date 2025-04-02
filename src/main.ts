@@ -30,6 +30,23 @@ async function bootstrap() {
   
   // SwaggerModule.setup('api', app, document);
   
+  // app.enableCors({
+  //   origin: 'http://localhost:5173', // Permitir solicitudes desde el frontend
+  //   credentials: true, // Permitir autenticación con cookies o headers
+  // });
+
+  // app.enableCors({
+  //   origin: 'https://0920-2800-300-6392-3d10-a9b6-2437-c2c0-4dd4.ngrok-free.app', // Permitir solicitudes desde el frontend
+  //   credentials: true, // Permitir autenticación con cookies o headers
+  //    allowedHeaders: 'Content-Type, Authorization',
+  // });
+
+  app.enableCors({
+    origin: '*', // O usa el dominio de Ngrok: 'https://tudominio.ngrok-free.app'
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   await app.listen(process.env.PORT);
   
   const env = process.env.ENV.padEnd(20, ' ');
