@@ -8,5 +8,8 @@ export const config = () => ({
     siproadAdminHost: process.env.SIPROAD_ADMIN_HOST,
     siproadAdminApiKey: process.env.SIPROAD_ADMIN_API_KEY,
     
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+
+    siproadWatchword: process.env.SIPROAD_WATCHWORD,
+    siproadPrincipalUsername: process.env.SIPROAD_PRINCIPAL_USERNAME,
   })
