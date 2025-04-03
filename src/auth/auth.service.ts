@@ -8,16 +8,25 @@ import { AdminUserService } from '../admin/admin-user.service';
 import { LoginDto } from './dto/login.dto';
 import { AdminUserDto } from 'src/admin/dto/admin-user.dto';
 import { PfxHttpResponseDto } from 'profaxnojs/axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
 
   private readonly logger = new Logger(AuthService.name);
 
+  private readonly siproadWatchword: string;
+  private readonly siproadPrincipalUsername: string;
+
   constructor(
+    private readonly ConfigService: ConfigService,
     private readonly adminUserService: AdminUserService,
     private jwtService: JwtService
-  ) {}
+  ) 
+  {
+    this.siproadWatchword = this.ConfigService.get("siproadWatchword");
+    this.siproadPrincipalUsername = this.ConfigService.get("siproadPrincipalUsername");
+  }
 
   login(loginDto: LoginDto): Promise<PfxHttpResponseDto> {
     this.logger.log(`login: username=${loginDto.username}`);
@@ -55,6 +64,42 @@ export class AuthService {
       
       this.logger.warn(`login: user not found, response=${response.message}, username=${username}`);
       throw new UnauthorizedException('invalid credentianls');  
+    })
+
+  }
+
+  initToken(watchword: string): Promise<PfxHttpResponseDto> {
+    
+    if(watchword != this.siproadWatchword){
+      this.logger.warn(`initToken: invalid watchword, watchword=${watchword}`);
+      throw new UnauthorizedException('invalid watchword');
+    }
+    
+    // * create/update user
+    return this.adminUserService.findOneByEmail(this.siproadPrincipalUsername)
+    .then( (response: PfxHttpResponseDto) => {
+
+      // * generate response
+      if(response.internalCode == HttpStatus.OK){
+        
+        // * get user
+        const userDto: AdminUserDto = response.payload[0];
+        
+        // * generate token
+        const token = this.generateJwtToken(userDto);
+
+        const data = {
+          user: {
+            name: userDto.name
+          },
+          token
+        }
+
+        return new PfxHttpResponseDto(response.internalCode, response.message, 1, data);
+      }
+      
+      this.logger.warn(`initToken: user not found, response=${response.message}`);
+      throw new UnauthorizedException('invalid credentianls');
     })
 
   }

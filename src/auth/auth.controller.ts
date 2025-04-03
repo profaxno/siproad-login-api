@@ -1,6 +1,6 @@
 import { PfxHttpResponseDto } from 'profaxnojs/axios';
 
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Logger, Post, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Logger, Param, Post, UnauthorizedException } from '@nestjs/common';
 
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
@@ -23,6 +23,27 @@ export class AuthController {
     .then( (response: PfxHttpResponseDto) => {
       const end = performance.now();
       this.logger.log(`<<< login: executed, runtime=${(end - start) / 1000} seconds, response=${JSON.stringify(response)}`);
+      return response;
+    })
+    .catch((error) => {
+      if(error instanceof UnauthorizedException)
+        return new PfxHttpResponseDto(HttpStatus.UNAUTHORIZED, error.message);
+
+      this.logger.error(error.stack);
+      return new PfxHttpResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, error.message);
+    })
+
+  }
+
+  @Post('/initToken/:watchword')
+  @HttpCode(HttpStatus.OK)
+  initToken(@Param('watchword') watchword: string): Promise<PfxHttpResponseDto> {
+    this.logger.log(`>>> initToken`);
+
+    return this.authService.initToken(watchword)
+    .then( (response: PfxHttpResponseDto) => {
+      const end = performance.now();
+      this.logger.log(`<<< initToken: executed, response=${JSON.stringify(response)}`);
       return response;
     })
     .catch((error) => {
