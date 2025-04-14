@@ -39,7 +39,9 @@ export class AdminUserDto {
   @Type(() => UserPermissionDto)
   permissionList?: UserPermissionDto[];
   
-  constructor(companyId: string, name: string, email: string, password: string, id?: string, status?: number, roleList?: UserRoleDto[], permissionList?: UserPermissionDto[]) {
+  company?: UserCompanyDto;
+
+  constructor(companyId: string, name: string, email: string, password: string, id?: string, status?: number, roleList?: UserRoleDto[], permissionList?: UserPermissionDto[], company?: UserCompanyDto){
     this.companyId = companyId;
     this.name = name;
     this.email = email;
@@ -48,6 +50,7 @@ export class AdminUserDto {
     this.status = status;
     this.roleList = roleList;
     this.permissionList = permissionList;
+    this.company = company;
   }
 }
 
@@ -78,4 +81,15 @@ export class UserPermissionDto {
     this.id = id;
     this.code = code;
   }
+}
+
+export class UserCompanyDto {
+  name: string;
+  images: any[];
+  
+  constructor(name: string, images: any[]) {
+    this.name = name;
+    this.images = images;
+  }
+
 }
