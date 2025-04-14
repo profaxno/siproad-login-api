@@ -11,16 +11,18 @@ services:
     ports:
       - "${PORT}:${PORT}"
     # working_dir: /var/www/pokedex
-    environment:
-      PORT: ${PORT}
-      HTTP_TIMEOUT: ${HTTP_TIMEOUT}
-      HTTP_MAX_REDIRECTS: ${HTTP_MAX_REDIRECTS}
-      EXECUTION_RETRIES: ${EXECUTION_RETRIES}
-      EXECUTION_BASE_DELAY: ${EXECUTION_BASE_DELAY}
-      DB_DEFAULT_LIMIT: 1000
-      SIPROAD_ADMIN_HOST: ${SIPROAD_ADMIN_HOST}
-      SIPROAD_ADMIN_API_KEY: ${SIPROAD_ADMIN_API_KEY}
-      JWT_SECRET: ${JWT_SECRET}
-      JWT_EXPIRE_IN: ${JWT_EXPIRE_IN}
+    env_file:
+      - .env
+    # environment:
+    #   PORT: ${PORT}
+    #   HTTP_TIMEOUT: ${HTTP_TIMEOUT}
+    #   HTTP_MAX_REDIRECTS: ${HTTP_MAX_REDIRECTS}
+    #   EXECUTION_RETRIES: ${EXECUTION_RETRIES}
+    #   EXECUTION_BASE_DELAY: ${EXECUTION_BASE_DELAY}
+    #   DB_DEFAULT_LIMIT: 1000
+    #   SIPROAD_ADMIN_HOST: ${SIPROAD_ADMIN_HOST}
+    #   SIPROAD_ADMIN_API_KEY: ${SIPROAD_ADMIN_API_KEY}
+    #   JWT_SECRET: ${JWT_SECRET}
+    #   JWT_EXPIRE_IN: ${JWT_EXPIRE_IN}
     # volumes:
     #   - ./:/var/www/pokedex
