@@ -21,11 +21,15 @@ export class ApiKeyGuard implements CanActivate {
     const apiKeyHeader = request.headers['x-api-key'];
     const expectedKey = process.env.API_KEY;
 
-    this.logger.log(`canActivate: apiKeyHeader=${apiKeyHeader}, expectedKey=${expectedKey}`);
+    // this.logger.log(`canActivate: apiKeyHeader=${apiKeyHeader}, expectedKey=${expectedKey}`);
 
     if(!expectedKey){ // * allow the request if API_KEY is not defined in .env file
       this.logger.error('API_KEY not defined in .env file');
       return true;
+    }
+
+    if(!apiKeyHeader){
+      this.logger.warn('x-api-key header not defined in request');
     }
 
     if (!apiKeyHeader || apiKeyHeader !== expectedKey) {
