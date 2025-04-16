@@ -22,7 +22,7 @@ export class AuthController {
     return this.authService.login(loginDto)
     .then( (response: PfxHttpResponseDto) => {
       const end = performance.now();
-      this.logger.log(`<<< login: executed, runtime=${(end - start) / 1000} seconds, response=${JSON.stringify(response)}`);
+      this.logger.log(`<<< login: executed, runtime=${(end - start) / 1000} seconds, username=${loginDto.username}`);
       return response;
     })
     .catch((error) => {
