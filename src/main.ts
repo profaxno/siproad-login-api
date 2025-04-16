@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
+import { ApiKeyGuard } from './auth/guards/api-key.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,9 +45,12 @@ async function bootstrap() {
   app.enableCors({
     origin: '*', // O usa el dominio de Ngrok: 'https://tudominio.ngrok-free.app'
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
+    allowedHeaders: 'Content-Type, x-api-key',
   });
 
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new ApiKeyGuard(reflector));
+  
   await app.listen(process.env.PORT);
   
   const env = process.env.ENV.padEnd(20, ' ');
