@@ -56,10 +56,7 @@ export class AuthService {
           user: {
             name: userDto.name
           },
-          company: {
-            name: userDto.company.name,
-            images: userDto.company.images
-          },
+          company: userDto.company,
           token
         }
 
