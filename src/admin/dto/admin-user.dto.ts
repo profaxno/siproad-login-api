@@ -84,12 +84,36 @@ export class UserPermissionDto {
 }
 
 export class UserCompanyDto {
-  name: string;
-  images: any[];
+  name      : string;
+  fantasyName : string;
+  idDoc?    : string;
+  address?  : string;
+  email?    : string;
+  phone?    : string;
+  bank? : bankDto;
+  images?   : any[];
   
-  constructor(name: string, images: any[]) {
+  constructor(name: string, fantasyName?: string, idDoc?: string, address?: string, email?: string, phone?: string, bank?: bankDto, images?: any[]){
     this.name = name;
+    this.fantasyName = fantasyName;
+    this.idDoc = idDoc;
+    this.address = address;
+    this.email = email;
+    this.phone = phone;
+    this.bank = bank;
     this.images = images;
   }
 
+}
+
+export class bankDto {
+  name: string;
+  accountType: string;
+  accountNumber: string;
+  
+  constructor(name: string, accountType: string, accountNumber: string){
+    this.name = name;
+    this.accountType = accountType;
+    this.accountNumber = accountNumber;
+  }
 }
